@@ -8,6 +8,7 @@ TP de bus et réseaux
 
 1. Adresses I2C : 0x77 ou 0x76, en fonction de si l'on connecte SDO à GND (0x76) ou à V_DDIO (0x77)
     Les adresses I2C ne peuvent pas être laissées flotantes.
+    On va utiliser l'adresse 0x77 car c'est cette dernière qui est écrite sur la board du BMP280.
 
 2. Le register : "id" est à l'adresse 0xD0 et contient la valeur du numéro d'identification de la puce qui est 0x58.  
 
@@ -25,8 +26,66 @@ TP de bus et réseaux
     "0xF8" contient la partie LSB de la mesure (ut[11:4])
     "0xF9" contient la partie XLSB de la mesure de pression (ut[3:0]). Son contenu dépend aussi de la résolution utilisée pour la température.
 
-7. Le "data type" BMP280_S32_t correspond à un entier signé de 32 bits,
+7. Le code pour le calcul de la température et de la pression en format 32 bits est le suivant :
+    
+    Le "data type" BMP280_S32_t correspond à un entier signé de 32 bits,
     Le "data type" BMP280_U32_t correspond à un entier non signé de 32 bits,
     
-    ![](C:\Users\pcail\OneDrive\Documents\ENSEA\S9\Bus\Tp\Calcul_temp_press.jpg"Calcul de la température et de la pression")
+    ```c
+
+    // Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC.
+    // t_fine carries fine temperature as global value
+    BMP280_S32_t t_fine;
+    BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t adc_T)
+    {
+        BMP280_S32_t var1, var2, T;
+        var1 = ((((adc_T>>3) - ((BMP280_S32_t)dig_T1<<1))) * ((BMP280_S32_t)dig_T2)) >> 11;
+        var2 = (((((adc_T>>4) - ((BMP280_S32_t)dig_T1)) * ((adc_T>>4) - ((BMP280_S32_t)dig_T1))) >> 12) *
+                ((BMP280_S32_t)dig_T3)) >> 14;
+        t_fine = var1 + var2;
+        T = (t_fine * 5 + 128) >> 8;
+        return T;
+    }
+
+    // Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
+    // Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
+    BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
+    {
+        BMP280_S32_t var1, var2;
+        BMP280_U32_t p;
+        var1 = (((BMP280_S32_t)t_fine)>>1) - (BMP280_S32_t)64000;
+        var2 = (((var1>>2) * (var1>>2)) >> 11 ) * ((BMP280_S32_t)dig_P6);
+        var2 = var2 + ((var1*(BMP280_S32_t)dig_P5)<<1);
+        var2 = (var2>>2)+(((BMP280_S32_t)dig_P4)<<16);
+        var1 = (((dig_P3 * ((var1>>2) * (var1>>2)) >> 13 )) >> 3) + ((((BMP280_S32_t)dig_P2) * var1)>>1)>>18;
+        var1 = ((((32768+var1))*((BMP280_S32_t)dig_P1))>>15);
+
+        if (var1 == 0)
+        {
+            return 0; // avoid exception caused by division by zero
+        }
+
+        p = (((BMP280_U32_t)(((BMP280_S32_t)1048576)-adc_P)-(var2>>12)))*3125;
+
+        if (p < 0x80000000)
+        {
+            p = (p << 1) / ((BMP280_U32_t)var1);
+        }
+        else
+        {
+            p = (p / (BMP280_U32_t)var1) * 2;
+        }
+
+        var1 = (((BMP280_S32_t)dig_P9) * (((BMP280_S32_t)((p>>3) * (p>>3)))>>13))>>12;
+        var2 = (((BMP280_S32_t)(p>>2)) * ((BMP280_S32_t)dig_P8))>>13;
+        p = (BMP280_U32_t)((BMP280_S32_t)p + ((var1 + var2 + dig_P7) >> 4));
+
+        return p;  
+    }
+
+    ```
+### 2.3 Communication I2C
+
+*BMP280 transmit Id register*
+![](/photos/BMP280_transmit_IDreg.png)
 
