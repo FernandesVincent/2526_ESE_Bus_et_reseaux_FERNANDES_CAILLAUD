@@ -126,7 +126,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
   printf("Demarrage du systeme\r\n");
 
-  BMP280_read_data_id();
+  // BMP280_write_register(0xF4, 0x57); // Configuration normale, pressure oversampling x16, temperature oversampling x2
+  // BMP280_read_register(0x88); 
+  // BMP280_read_several_registers(0x88, 0x9F); // Lecture des registres de calibration de temperature et de température
+  BMP280_read_raw_temp();
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -134,6 +138,10 @@ int main(void)
   while (1)
   {
     // echo();
+    // BMP280_read_data_id();
+    // HAL_Delay(1000);
+    // BMP280_read_data_id();
+    // HAL_Delay(1000);
     /* USER CODE END WHILE */
 
 
