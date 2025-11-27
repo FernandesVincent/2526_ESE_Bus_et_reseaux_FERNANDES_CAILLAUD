@@ -1,0 +1,25 @@
+#cloud-config
+hostname: 2526FERNANDESCAILLAUD
+manage_etc_hosts: true
+packages:
+- avahi-daemon
+apt:
+  conf: |
+    Acquire {
+      Check-Date "false";
+    };
+timezone: Europe/Paris
+keyboard:
+  model: pc105
+  layout: "fr"
+enable_ssh: true
+users:
+- name: fernandescaillaud
+  groups: users,adm,dialout,audio,netdev,video,plugdev,cdrom,games,input,gpio,spi,i2c,render,sudo
+  shell: /bin/bash
+  lock_passwd: false
+  passwd: $y$jB5$kc2BrR4QpE2R1F4GEVIHc/$hH6XVgPex8BZmC5PYt9Kd2qos8.60kfpD0TdZghnfXA
+ssh_pwauth: true
+rpi:
+  interfaces:
+    serial: true

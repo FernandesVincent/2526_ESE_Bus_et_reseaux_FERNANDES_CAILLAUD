@@ -1,0 +1,10 @@
+network:
+  version: 2
+  wifis:
+    wlan0:
+      dhcp4: true
+      regulatory-domain: "FR"
+      access-points:
+        "C304_DTI_AP":
+          password: "96fbefc8d5ade676cc6b8e9fc721c4224d0548e6e2e3839a62e4e7a4cbb6287f"
+      optional: true
