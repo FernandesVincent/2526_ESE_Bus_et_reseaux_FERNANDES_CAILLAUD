@@ -20,6 +20,7 @@
 #include "main.h"
 #include "can.h"
 #include "i2c.h"
+#include "stm32f4xx_hal_uart.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -28,6 +29,7 @@
 #include <stdio.h>
 #include "echo.h"
 #include "BMP280.h"
+#include "MPU9250.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,6 +51,7 @@
 
 /* USER CODE BEGIN PV */
 extern UART_HandleTypeDef huart2;
+char rx[100];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -88,6 +91,15 @@ int _read(int file, char *ptr, int len)
     return count;
 }
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+
+  if(huart->Instance == USART1){
+
+    HAL_UART_Receive_IT(&huart1, (uint8_t *)rx, 1);
+    HAL_UART_Transmit(&huart1, (uint8_t *)rx, 1, HAL_MAX_DELAY);
+    Rasbpi_protocol(rx);
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -96,7 +108,7 @@ int _read(int file, char *ptr, int len)
   */
 int main(void)
 {
-  
+
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -123,48 +135,58 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+  HAL_UART_Receive_IT(&huart1, (uint8_t *)rx, 1);
+
   /* USER CODE BEGIN 2 */
   printf("Demarrage du systeme\r\n");
+/////////////////////////////////////////////////////////////////////
+//   // Initialisation du BMP280
+//   BMP280_Init();
 
-  // Initialisation du BMP280
-  BMP280_Init();
+//   // Vérification de l'ID du capteur (devrait retourner 0x58)
+//   BMP280_read_register(0xD0);  // Registre ID, pas 0x88
 
-  // Vérification de l'ID du capteur (devrait retourner 0x58)
-  BMP280_read_register(0xD0);  // Registre ID, pas 0x88
+//   // Configuration du capteur
+//   // 0x57 = 01010111b
+//   // bits 7-5 (010) : température oversampling x2
+//   // bits 4-2 (101) : pression oversampling x16  
+//   // bits 1-0 (11)  : mode normal
+//   BMP280_write_register(0xF4, 0x57);
 
-  // Configuration du capteur
-  // 0x57 = 01010111b
-  // bits 7-5 (010) : température oversampling x2
-  // bits 4-2 (101) : pression oversampling x16  
-  // bits 1-0 (11)  : mode normal
-  BMP280_write_register(0xF4, 0x57);
+//   // Configuration du registre config (0xF5) - optionnel mais recommandé
+//   // 0xA0 = 10100000b
+//   // bits 7-5 (101) : standby 1000ms
+//   // bits 4-2 (000) : filter off
+//   // bit 0 (0)      : SPI désactivé
+//   BMP280_write_register(0xF5, 0xA0);
 
-  // Configuration du registre config (0xF5) - optionnel mais recommandé
-  // 0xA0 = 10100000b
-  // bits 7-5 (101) : standby 1000ms
-  // bits 4-2 (000) : filter off
-  // bit 0 (0)      : SPI désactivé
-  BMP280_write_register(0xF5, 0xA0);
+//   // Attendre que le capteur effectue une mesure
+//   // Temps de mesure typique = ~40ms avec ces paramètres
+//   HAL_Delay(100);
 
-  // Attendre que le capteur effectue une mesure
-  // Temps de mesure typique = ~40ms avec ces paramètres
-  HAL_Delay(100);
+//   // Lecture des valeurs brutes
+//   int raw_temp = BMP280_read_raw_temp();
+//   int raw_press = BMP280_read_raw_pressure();
 
-  // Lecture des valeurs brutes
-  int raw_temp = BMP280_read_raw_temp();
-  int raw_press = BMP280_read_raw_pressure();
+//   // Calcul des valeurs compensées
+//   // IMPORTANT : Il faut d'abord calculer la température car elle met à jour t_fine
+//   int compensate_temp = bmp280_compensate_T_int32(raw_temp); 
+//   int compensate_press = bmp280_compensate_P_int64(raw_press);
 
-  // Calcul des valeurs compensées
-  // IMPORTANT : Il faut d'abord calculer la température car elle met à jour t_fine
-  int compensate_temp = bmp280_compensate_T_int32(raw_temp); 
-  int compensate_press = bmp280_compensate_P_int64(raw_press);
+//   // Conversion en unités lisibles
+//   int temp_celsius = compensate_temp / 100.0f;  // Résolution 0.01°C
+//   int press_pa = compensate_press / 256.0f;     // Format Q24.8
+//   int press_hpa = press_pa / 100;               // Conversion en hPa
+//   printf("Temperature compensee: %d °C\r\n", temp_celsius);
+//   printf("Pression compensee: %d hPa\r\n", press_hpa);
+// /////////////////////////////////////////////////////////////////////
 
-  // Conversion en unités lisibles
-  int temp_celsius = compensate_temp / 100.0f;  // Résolution 0.01°C
-  int press_pa = compensate_press / 256.0f;     // Format Q24.8
-  int press_hpa = press_pa / 100;               // Conversion en hPa
-  printf("Temperature compensee: %d °C\r\n", temp_celsius);
-  printf("Pression compensee: %d hPa\r\n", press_hpa);
+  // int16_t ax, ay, az;
+  // int16_t gx, gy, gz;
+  // int16_t mx, my, mz;
+
+  // MPU9250_Init();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -176,8 +198,17 @@ int main(void)
     // HAL_Delay(1000);
     // BMP280_read_data_id();
     // HAL_Delay(1000);
-    /* USER CODE END WHILE */
 
+    // MPU9250_ReadAccelRaw(&ax, &ay, &az);
+    // MPU9250_ReadGyroRaw(&gx, &gy, &gz);
+    // MPU9250_ReadMagRaw(&mx, &my, &mz);
+
+    // printf("ACC : %d  %d  %d\n", ax, ay, az);
+    // printf("GYR : %d  %d  %d\n", gx, gy, gz);
+    // printf("MAG : %d  %d  %d\n\n", mx, my, mz);
+
+    // HAL_Delay(50);
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }

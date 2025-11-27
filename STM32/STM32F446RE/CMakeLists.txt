@@ -47,6 +47,7 @@ target_sources(
     ${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/TP1/echo/echo.c
     ${CMAKE_CURRENT_SOURCE_DIR}/TP1/BMP280/BMP280.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/TP1/MPU9250/MPU9250.c
     # Add user sources here
 )
 
@@ -55,6 +56,7 @@ target_include_directories(
     ${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/TP1/echo
     ${CMAKE_CURRENT_SOURCE_DIR}/TP1/BMP280
+    ${CMAKE_CURRENT_SOURCE_DIR}/TP1/MPU9250
     # Add user defined include paths
 )
 
