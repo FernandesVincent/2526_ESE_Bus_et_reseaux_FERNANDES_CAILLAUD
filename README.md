@@ -16,19 +16,19 @@ TP de bus et réseaux
 
 4. L'étalonnage est fait grâce aux registres de calibrations "calib25" à "calib00" des adresses 0xA1 à 0x88.
 
-5. Pour gérer la température, on utilise 3 registres : "0xFA", "0xFB" et "0xFC".
-    "0xFA" contient la partie MSB de la mesure de température (ut[19:12])
-    "0xFB" contient la partie LSB de la mesure (ut[11:4])
+5. Pour gérer la température, on utilise 3 registres : "0xFA", "0xFB" et "0xFC".  
+    "0xFA" contient la partie MSB de la mesure de température (ut[19:12])  
+    "0xFB" contient la partie LSB de la mesure (ut[11:4])  
     "0xFC" contient la partie XLSB de la mesure de température (ut[3:0]). Son contenu dépend aussi de la résolution utilisée pour la pression.
 
-6. Pour gérer la pression, on utilise aussi 3 registres : "0xF7", "0xF8" et "0xF9".
-    "0xF7" contient la partie MSB de la mesure de pression (ut[19:12])
-    "0xF8" contient la partie LSB de la mesure (ut[11:4])
+6. Pour gérer la pression, on utilise aussi 3 registres : "0xF7", "0xF8" et "0xF9".  
+    "0xF7" contient la partie MSB de la mesure de pression (ut[19:12])  
+    "0xF8" contient la partie LSB de la mesure (ut[11:4])  
     "0xF9" contient la partie XLSB de la mesure de pression (ut[3:0]). Son contenu dépend aussi de la résolution utilisée pour la température.
 
 7. Le code pour le calcul de la température et de la pression en format 32 bits est le suivant :
     
-    Le "data type" BMP280_S32_t correspond à un entier signé de 32 bits,
+    Le "data type" BMP280_S32_t correspond à un entier signé de 32 bits,  
     Le "data type" BMP280_U32_t correspond à un entier non signé de 32 bits,
     
     ```c
@@ -86,6 +86,21 @@ TP de bus et réseaux
     ```
 ### 2.3 Communication I2C
 
-*BMP280 transmit Id register*
+_BMP280 transmit Id register_
 ![](/photos/BMP280_transmit_IDreg.png)
+On retrouve bien le 0xEE qui correspond au 0x77 qui a été décalé. On aussi bien l'ID du BMP280 qui est transmise. 
+
+On veut la configuration suivante: mode normal, Pressure oversampling x16, Temperature oversampling x2.
+On a donc bits 7,6,5 pour la température, 4,3,2 pour la pression et 1,0 pour le mode ce qui donne :
+        -010 pour temp
+        -101 pour press
+        -11 pour le mode normal
+Donc le registre "ctrl_meas" prend la valeur 0b01010111 et en hexadécimal : **0x57**
+
+
+### 2.4 Interfacage de l'acceléromètre
+
+## TP2 - Interfacage STM32 - Raspberry
+
+[Raspberry Pi Imager](https://www.raspberrypi.com/software/)
 
