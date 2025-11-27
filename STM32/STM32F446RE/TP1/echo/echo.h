@@ -3,5 +3,6 @@
 
 
 int echo();
+void Rasbpi_protocol(char *message );
 #endif /* __ECHO_H__ */
 
