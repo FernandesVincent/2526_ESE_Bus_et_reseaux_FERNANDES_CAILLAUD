@@ -126,11 +126,45 @@ int main(void)
   /* USER CODE BEGIN 2 */
   printf("Demarrage du systeme\r\n");
 
-  // BMP280_write_register(0xF4, 0x57); // Configuration normale, pressure oversampling x16, temperature oversampling x2
-  // BMP280_read_register(0x88); 
-  // BMP280_read_several_registers(0x88, 0x9F); // Lecture des registres de calibration de temperature et de température
-  BMP280_read_raw_temp();
-  
+  // Initialisation du BMP280
+  BMP280_Init();
+
+  // Vérification de l'ID du capteur (devrait retourner 0x58)
+  BMP280_read_register(0xD0);  // Registre ID, pas 0x88
+
+  // Configuration du capteur
+  // 0x57 = 01010111b
+  // bits 7-5 (010) : température oversampling x2
+  // bits 4-2 (101) : pression oversampling x16  
+  // bits 1-0 (11)  : mode normal
+  BMP280_write_register(0xF4, 0x57);
+
+  // Configuration du registre config (0xF5) - optionnel mais recommandé
+  // 0xA0 = 10100000b
+  // bits 7-5 (101) : standby 1000ms
+  // bits 4-2 (000) : filter off
+  // bit 0 (0)      : SPI désactivé
+  BMP280_write_register(0xF5, 0xA0);
+
+  // Attendre que le capteur effectue une mesure
+  // Temps de mesure typique = ~40ms avec ces paramètres
+  HAL_Delay(100);
+
+  // Lecture des valeurs brutes
+  int raw_temp = BMP280_read_raw_temp();
+  int raw_press = BMP280_read_raw_pressure();
+
+  // Calcul des valeurs compensées
+  // IMPORTANT : Il faut d'abord calculer la température car elle met à jour t_fine
+  int compensate_temp = bmp280_compensate_T_int32(raw_temp); 
+  int compensate_press = bmp280_compensate_P_int64(raw_press);
+
+  // Conversion en unités lisibles
+  int temp_celsius = compensate_temp / 100.0f;  // Résolution 0.01°C
+  int press_pa = compensate_press / 256.0f;     // Format Q24.8
+  int press_hpa = press_pa / 100;               // Conversion en hPa
+  printf("Temperature compensee: %d °C\r\n", temp_celsius);
+  printf("Pression compensee: %d hPa\r\n", press_hpa);
   /* USER CODE END 2 */
 
   /* Infinite loop */
