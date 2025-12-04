@@ -109,12 +109,31 @@ On utilise l'image "Raspberry Pi OS (32-bit) Lite".
 _Connection de la Raspberry Pi 0_
 ![](/photos/Raspi_ssh.png)  
 
-La Raspberry a obtenue son adresse IP grace au routeur lorsque cette dernière c'est connectée au wifi pour la première fois.  
+La Raspberry a obtenue son adresse IP grâce au routeur lorsque cette dernière s'est connectée au wifi pour la première fois.  
 Dans notre cas, c'est 192.168.4.218  
 
 On installe ensuite minicom : sudo apt install minicom.  
 On doit aussi utiliser la commande : minicom -D /dev/ttyS0 car la commande minicom -D /dev/ttyAMA0 ne fonctionne pas.
 
-Le llopback fonctionne bien lorsque les pins Tx et Rx sont connectés.
+Le loopback fonctionne bien lorsque les pins Tx et Rx sont connectés.
 ![](/photos/minicom_init.png)  
+
+
+## TP3 - 
+
+![](/photos/commande_hw.png)
+
+![](/photos/receive_hw.png)
+
+![](/photos/curl_s_d.png)
+
+rôle du @app.route:  
+- @app.route permet d'associer une url à une fonction python, c'est à dire que lorsque l'on fait une requête sur l'url, la fonction python est executée et la valeur est renvoyée au client. 
+- C'est un décorateur Flask  
+
+rôle de int:index :
+- c'est la variable de route  
+- Flask va extraire une valeur entière de l'url et la passer en argument à la fonction python.
+
+
 
