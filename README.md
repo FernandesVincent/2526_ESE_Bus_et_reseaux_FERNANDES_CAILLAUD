@@ -119,13 +119,17 @@ Le loopback fonctionne bien lorsque les pins Tx et Rx sont connectés.
 ![](/photos/minicom_init.png)  
 
 
-## TP3 - 
+## TP3 - Interface REST
 
 ![](/photos/commande_hw.png)
 
+Pour le premier serveur on obtient sur l'adresse de loopback : 
 ![](/photos/receive_hw.png)
 
 ![](/photos/curl_s_d.png)
+
+Et en testant sur le navigateur avec la deuxième commande :  
+![](/photos/web_hellow.png)
 
 rôle du @app.route:  
 - @app.route permet d'associer une url à une fonction python, c'est à dire que lorsque l'on fait une requête sur l'url, la fonction python est executée et la valeur est renvoyée au client. 
@@ -135,5 +139,17 @@ rôle de int:index :
 - c'est la variable de route  
 - Flask va extraire une valeur entière de l'url et la passer en argument à la fonction python.
 
+On créé ensuite le dossier templates où l'on ajoute page_not_found.html:  
+![](/photos/hello_error404.png)  
+Et on obtient:  
+![](/photos/error404.png)
 
 
+### 4.3 Nouvelles méthodes HTTP  
+
+En essayant avec l'utilitaire curl, on a bien l'erreur 405  
+![](/photos/error_405.png) 
+
+On rajoute les différentes fonction voulues selon le type methode :  
+Quand on veut changer la phrase on obtient bien :  
+![](/photos/changesentence.png)
