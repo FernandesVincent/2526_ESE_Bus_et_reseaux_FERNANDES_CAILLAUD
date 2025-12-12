@@ -6,7 +6,9 @@
 #include <string.h>
 #include <stdlib.h> 
 
-float K = 1.0f;  // int echo() {
+// float K = 1.0f;  
+int K = 1;
+// int echo() {
 //   printf("Entrez un message: ");
 //   fgets(message, sizeof(message), stdin);
 //   printf("Vous avez entre: %s", message);
@@ -32,7 +34,8 @@ void Rasbpi_protocol(char *message) {
     // printf("Pression compensee: %d hPa\r\n", press_hpa);
   } else if (strcmp(message, "GET_K") == 0) {
     printf("Commande GET_K recue\r\n");
-    printf("K=%10.5f\r\n", K);
+    // printf("K=%10.5f\r\n", K);
+    printf("K=%d\r\n", K);
 
   } else if (strcmp(message, "GET_A") == 0) {
     printf("Commande GET_A recue\r\n");
@@ -41,10 +44,13 @@ void Rasbpi_protocol(char *message) {
   } else if (strncmp(message, "SET_K=", 6) == 0) {
     printf("Commande SET_K recue\r\n");
     char *value_str = message + 6;
-    int value = atoi(value_str);   // Valeur entière reçue en 1/100e
-    K = value / 100.0f;            // Convertir en float
+    K = atof(value_str);
+    // int value = atoi(value_str);   
+    // K = value / 100.0f;           
     printf("K=OK\r\n");
-    printf("Nouvelle valeur de K: %10.5f\r\n", K);
+    // printf("Nouvelle valeur de K: %10.5f\r\n", K);
+    printf("Nouvelle valeur de K: %d\r\n", K);
+
 
   }
   else {

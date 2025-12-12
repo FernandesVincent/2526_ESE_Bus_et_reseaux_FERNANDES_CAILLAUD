@@ -1,18 +1,18 @@
 #include "main.h"
 #include "MPU9250.h"
 
-extern I2C_HandleTypeDef hi2c1;
+extern I2C_HandleTypeDef hi2c2;
 
 static void I2C_Write(uint16_t dev, uint8_t reg, uint8_t data)
 {
     uint8_t buf[2] = {reg, data};
-    HAL_I2C_Master_Transmit(&hi2c1, dev, buf, 2, HAL_MAX_DELAY);
+    HAL_I2C_Master_Transmit(&hi2c2, dev, buf, 2, HAL_MAX_DELAY);
 }
 
 static void I2C_Read(uint16_t dev, uint8_t reg, uint8_t *buf, uint8_t len)
 {
-    HAL_I2C_Master_Transmit(&hi2c1, dev, &reg, 1, HAL_MAX_DELAY);
-    HAL_I2C_Master_Receive(&hi2c1, dev, buf, len, HAL_MAX_DELAY);
+    HAL_I2C_Master_Transmit(&hi2c2, dev, &reg, 1, HAL_MAX_DELAY);
+    HAL_I2C_Master_Receive(&hi2c2, dev, buf, len, HAL_MAX_DELAY);
 }
 
 static int16_t make16(uint8_t h, uint8_t l)

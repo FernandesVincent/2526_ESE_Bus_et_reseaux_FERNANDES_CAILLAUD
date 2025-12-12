@@ -48,6 +48,7 @@ target_sources(
     ${CMAKE_CURRENT_SOURCE_DIR}/TP1/echo/echo.c
     ${CMAKE_CURRENT_SOURCE_DIR}/TP1/BMP280/BMP280.c
     ${CMAKE_CURRENT_SOURCE_DIR}/TP1/MPU9250/MPU9250.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/TP1/Motor/Motor.c
     # Add user sources here
 )
 
@@ -57,6 +58,7 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/TP1/echo
     ${CMAKE_CURRENT_SOURCE_DIR}/TP1/BMP280
     ${CMAKE_CURRENT_SOURCE_DIR}/TP1/MPU9250
+    ${CMAKE_CURRENT_SOURCE_DIR}/TP1/Motor
     # Add user defined include paths
 )
 
