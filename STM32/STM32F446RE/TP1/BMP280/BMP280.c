@@ -4,15 +4,12 @@
 extern I2C_HandleTypeDef hi2c2;
 
 uint8_t data_buffer[64];
-// === DÉFINITIONS DES VARIABLES GLOBALES ===
 BMP280_S32_t t_fine;
 
-// Paramètres température
 BMP280_U16_t dig_T1;
 BMP280_S16_t dig_T2;
 BMP280_S16_t dig_T3;
 
-// Paramètres pression
 BMP280_U16_t dig_P1;
 BMP280_S16_t dig_P2;
 BMP280_S16_t dig_P3;
@@ -56,11 +53,7 @@ void BMP280_write_register(uint8_t reg, uint8_t value){
     uint8_t tx_data[2] = {reg, value};
     HAL_I2C_Master_Transmit(&hi2c2, BMP280_I2C_ADDRESS<<1, tx_data, 2, HAL_MAX_DELAY);
     printf("Ecriture de la valeur 0x%02X dans le registre 0x%02X du BMP280\r\n", value, reg);
-    
-    // Petite pause pour laisser le registre se mettre à jour
     HAL_Delay(10);
-    
-    // Relire pour vérifier
     HAL_I2C_Mem_Read(&hi2c2, BMP280_I2C_ADDRESS<<1, reg, 1, data_buffer, 1, HAL_MAX_DELAY);
     printf("Valeur lue dans le registre 0x%02X: 0x%02X\r\n", reg, data_buffer[0]);
 }
@@ -97,9 +90,6 @@ int  BMP280_read_raw_pressure(){
   return raw_pressure;
 }
 
-
-// Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC.
-// t_fine carries fine temperature as global value
 BMP280_S32_t t_fine;
 
 BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t adc_T)
@@ -113,8 +103,6 @@ BMP280_S32_t bmp280_compensate_T_int32(BMP280_S32_t adc_T)
     return T;
 }
 
-// Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
-// Output value of "24674867" represents 24674867/256 = 96386.2 Pa = 963.862 hPa
 BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
 {
     int64_t var1, var2, p;
@@ -128,7 +116,7 @@ BMP280_U32_t bmp280_compensate_P_int64(BMP280_S32_t adc_P)
     
     if (var1 == 0)
     {
-        return 0; // avoid exception caused by division by zero
+        return 0;
     }
     
     p = 1048576 - adc_P;
