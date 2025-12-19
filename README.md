@@ -186,6 +186,9 @@ Pour faire cela, il a été nécessaire de créer la fonction CAN_Command_prop_t
 
 Ainsi, lorsque la température est récupérée à l'instant t elle est comparée à une valeur de température de référence prise au démarrage du système. Si la température actuelle est environ égale à la température de référence alors le moteur sera orienté vers l'angle 0°. Cependant, si la température courante varie, alors le moteur va s'orienter vers un angle positif (si le delta de température est positif) ou vers un angle négatif (si le delta est négatif). L'angle atteint étant proportionel à la température en fonction d'un coefficient K.
 
+## TP5 - Intégration I²C - Serial - REST - CAN
 
+Les fonctions demandées ont été implémentées. 
+La transmission UART entre la Raspberry Pi et la nucleo est fonctionnelle.
 
 
