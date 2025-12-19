@@ -153,3 +153,42 @@ En essayant avec l'utilitaire curl, on a bien l'erreur 405
 On rajoute les différentes fonction voulues selon le type methode :  
 Quand on veut changer la phrase on obtient bien :  
 ![](/photos/changesentence.png)
+
+## TP4 - Bus CAN
+
+Configuration du bus CAN 1 sous CubeMX :
+
+![](/photos/can.png)
+
+### 5.1 Pilotage du moteur 
+
+Pour piloter le moteur, il a fallut créer les trois fonctions suivantes : 
+
+- CAN_InitAndStart() qui permet de démarrer le CAN
+
+![](/photos/InitAndStart.png)
+
+- CAN_Command_Set_to_0() pour définir l'angle 0° du moteur pas à pas :
+
+![](/photos/Set_0.png)
+
+- CAN_Command_AutoMode() pour configurer le mode d'utilisation du moteur :
+
+![](/photos/Automode.png)
+
+### 5.2. Interfaçage avec le capteur
+
+Le but de cette partie est d'utiliser le moteur de façon proportionnelle à la valeur de température récupérée par le capteur BMP280. 
+Pour faire cela, il a été nécessaire de créer la fonction CAN_Command_prop_temp(int coefficient) : 
+
+![](/photos/Command.png)
+
+
+Ainsi, lorsque la température est récupérée à l'instant t elle est comparée à une valeur de température de référence prise au démarrage du système. Si la température actuelle est environ égale à la température de référence alors le moteur sera orienté vers l'angle 0°. Cependant, si la température courante varie, alors le moteur va s'orienter vers un angle positif (si le delta de température est positif) ou vers un angle négatif (si le delta est négatif). L'angle atteint étant proportionel à la température en fonction d'un coefficient K.
+
+## TP5 - Intégration I²C - Serial - REST - CAN
+
+Les fonctions demandées ont été implémentées. 
+La transmission UART entre la Raspberry Pi et la nucleo est fonctionnelle.
+
+

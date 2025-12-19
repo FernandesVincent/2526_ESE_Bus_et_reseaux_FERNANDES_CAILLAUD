@@ -36,24 +36,21 @@ typedef int64_t BMP280_S64_t;
 typedef uint16_t BMP280_U16_t;
 typedef int16_t BMP280_S16_t;
 
-// === VARIABLES GLOBALES ===
-extern BMP280_S32_t t_fine; // DOIT être calculé par temperature d'abord!
+extern BMP280_S32_t t_fine; 
 
-// Paramètres de calibration pression (à lire UNE FOIS)
-extern BMP280_U16_t dig_P1; // unsigned
-extern BMP280_S16_t dig_P2; // signed
-extern BMP280_S16_t dig_P3; // signed
-extern BMP280_S16_t dig_P4; // signed
-extern BMP280_S16_t dig_P5; // signed
-extern BMP280_S16_t dig_P6; // signed
-extern BMP280_S16_t dig_P7; // signed
-extern BMP280_S16_t dig_P8; // signed
-extern BMP280_S16_t dig_P9; // signed
+extern BMP280_U16_t dig_P1; 
+extern BMP280_S16_t dig_P2; 
+extern BMP280_S16_t dig_P3; 
+extern BMP280_S16_t dig_P4; 
+extern BMP280_S16_t dig_P5; 
+extern BMP280_S16_t dig_P6; 
+extern BMP280_S16_t dig_P7; 
+extern BMP280_S16_t dig_P8; 
+extern BMP280_S16_t dig_P9; 
 
-// Paramètres de calibration température (à lire UNE FOIS)
-extern BMP280_U16_t dig_T1; // unsigned
-extern BMP280_S16_t dig_T2; // signed
-extern BMP280_S16_t dig_T3; // signed
+extern BMP280_U16_t dig_T1; 
+extern BMP280_S16_t dig_T2; 
+extern BMP280_S16_t dig_T3; 
 
 
 void BMP280_Init(void);

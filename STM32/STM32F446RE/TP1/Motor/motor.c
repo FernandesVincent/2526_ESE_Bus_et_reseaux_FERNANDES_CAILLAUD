@@ -10,7 +10,7 @@ void CAN_InitAndStart(void){
     }
 }
 
-void Send_CAN_Command_Set_to_0(){
+void CAN_Command_Set_to_0(){
     CAN_TxHeaderTypeDef TxHeader;
     uint32_t TxMailbox;
 
@@ -35,7 +35,7 @@ void Init_temp_reference() {
     raw_temp_ref = BMP280_read_raw_temp();
 }
 
-void Send_CAN_Command_prop_temp(int coefficient){
+void CAN_Command_prop_temp(int coefficient){
     int raw_temp = BMP280_read_raw_temp();
     int16_t delta_temp = raw_temp - raw_temp_ref;
     printf("Delta temperature: %d\r\n", delta_temp);
@@ -49,11 +49,11 @@ void Send_CAN_Command_prop_temp(int coefficient){
         orientation = 0x00;
         angle = -angle;
     }
-    Send_CAN_Command_AutoMode(angle, orientation);
+    CAN_Command_AutoMode(angle, orientation);
 }
 
 
-void Send_CAN_Command_AutoMode(int16_t angle, int16_t orientation){
+void CAN_Command_AutoMode(int16_t angle, int16_t orientation){
     CAN_TxHeaderTypeDef TxHeader;
     uint8_t TxData[2];
     uint32_t TxMailbox;
@@ -80,16 +80,11 @@ extern int K;
 
 void Motor_Test(void){
     CAN_InitAndStart();
-    Send_CAN_Command_Set_to_0();
+    CAN_Command_Set_to_0();
     Init_temp_reference();
     HAL_Delay(1000);
     while (1){
-        // Send_CAN_Command_prop_temp(5);
-        Send_CAN_Command_prop_temp(K);
+        CAN_Command_prop_temp(5);
         HAL_Delay(1000);
-        // Send_CAN_Command_AutoMode(0x5A, 0x00);
-        // HAL_Delay(1000);
-        // Send_CAN_Command_AutoMode(0x5A, 0x01);
-        // HAL_Delay(1000);
     }
 }
