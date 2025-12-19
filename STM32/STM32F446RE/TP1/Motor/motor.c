@@ -84,7 +84,7 @@ void Motor_Test(void){
     Init_temp_reference();
     HAL_Delay(1000);
     while (1){
-        CAN_Command_prop_temp(K);
+        CAN_Command_prop_temp(5);
         HAL_Delay(1000);
     }
 }

@@ -142,12 +142,12 @@ int main(void)
   printf("Temperature compensee: %d °C\r\n", temp_celsius);
   printf("Pression compensee: %d hPa\r\n", press_hpa);
 
-  int16_t ax, ay, az;
-  int16_t gx, gy, gz;
-  int16_t mx, my, mz;
+  // int16_t ax, ay, az;
+  // int16_t gx, gy, gz;
+  // int16_t mx, my, mz;
 
-  MPU9250_Init();
-  printf("MPU9250 initialized\r\n");
+  // MPU9250_Init();
+  // printf("MPU9250 initialized\r\n");
   printf("Motor test\r\n");
   Motor_Test();
   /* USER CODE END 2 */
